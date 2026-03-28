@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emily's European Summer 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;--card:rgba(255,255,255,0.04);--card-hover:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#94a3b8;
+  --coral:#f97066;--gold:#fbbf24;--emerald:#34d399;--indigo:#818cf8;
+  --sky:#38bdf8;--pink:#f472b6;--violet:#a78bfa;
+  --glass:rgba(15,23,42,0.75);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(249,112,102,0.08),transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(251,191,36,0.06),transparent 60%);pointer-events:none;z-index:0}
+
+/* Password Gate */
+.pw-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.pw-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(249,112,102,0.12),transparent 70%);pointer-events:none}
+.pw-title{font-size:2rem;font-weight:700;letter-spacing:2px;background:linear-gradient(135deg,var(--coral),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative}
+.pw-sub{color:var(--muted);font-size:.9rem;margin-top:-8px;position:relative}
+.pw-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:12px;padding:14px 20px;color:var(--text);font-size:1rem;width:280px;outline:none;text-align:center;position:relative;transition:border-color .3s}
+.pw-input:focus{border-color:var(--coral)}
+.pw-btn{background:linear-gradient(135deg,var(--coral),#e85d6f);border:none;border-radius:12px;padding:12px 40px;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s}
+.pw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(249,112,102,0.3)}
+.pw-error{color:var(--coral);font-size:.85rem;position:relative;opacity:0;transition:opacity .3s}
+.pw-error.show{opacity:1}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+.shake{animation:shake .4s ease}
+.app-content.locked{display:none}
+
+/* Header */
+.header{text-align:center;padding:40px 20px 20px;position:relative;z-index:1}
+.header h1{font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--coral),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.header .sub{color:var(--muted);font-size:.95rem}
+.header .dates{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:6px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:.85rem;color:var(--muted)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:4px;padding:10px 20px;max-width:900px;margin:0 auto;overflow-x:auto;position:relative;z-index:1;-webkit-overflow-scrolling:touch}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:10px 18px;border-radius:10px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .25s;border:1px solid transparent;background:transparent}
+.tab:hover{color:var(--text);background:var(--card)}
+.tab.active{color:#fff;background:linear-gradient(135deg,rgba(249,112,102,0.15),rgba(251,191,36,0.1));border-color:rgba(249,112,102,0.3)}
+
+/* Panels */
+.panel{display:none;padding:10px 20px 40px;max-width:900px;margin:0 auto;position:relative;z-index:1}
+.panel.active{display:block}
+
+/* Phase sections */
+.phase{margin-bottom:32px}
+.phase-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.phase-icon{font-size:1.3rem}
+.phase-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+.phase-dates{margin-left:auto;font-size:.8rem;color:var(--muted);background:var(--card);padding:4px 10px;border-radius:8px}
+
+/* Day cards */
+.day{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;transition:background .2s,border-color .2s}
+.day:hover{background:var(--card-hover);border-color:rgba(255,255,255,0.12)}
+.day-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.day-date{font-weight:700;font-size:.95rem;color:var(--text);min-width:90px}
+.day-loc{font-size:.85rem;color:var(--muted)}
+.day-badge{font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:20px;margin-left:auto;text-transform:uppercase;letter-spacing:.5px}
+.day-badge.travel{background:rgba(249,112,102,0.15);color:var(--coral)}
+.day-badge.solo{background:rgba(129,140,248,0.15);color:var(--indigo)}
+.day-badge.together{background:rgba(52,211,153,0.15);color:var(--emerald)}
+.day-badge.departure{background:rgba(251,191,36,0.15);color:var(--gold)}
+.day-items{list-style:none;padding-left:12px}
+.day-items li{position:relative;padding:3px 0 3px 16px;font-size:.85rem;color:var(--muted);line-height:1.5}
+.day-items li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:50%;background:var(--border)}
+.day-note{margin-top:8px;padding:8px 12px;background:rgba(249,112,102,0.06);border-left:3px solid var(--coral);border-radius:0 8px 8px 0;font-size:.8rem;color:var(--coral)}
+.day-tip{margin-top:8px;padding:8px 12px;background:rgba(52,211,153,0.06);border-left:3px solid var(--emerald);border-radius:0 8px 8px 0;font-size:.8rem;color:var(--emerald)}
+.day-link{font-size:.8rem;color:var(--coral);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block}
+
+/* Guide sections (Athens, Düsseldorf, KL) */
+.guide-intro{font-size:.9rem;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.section{margin-bottom:32px}
+.section-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title span{font-size:1.2rem}
+.attr-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.attr{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:background .2s,border-color .2s}
+.attr:hover{background:var(--card-hover);border-color:rgba(255,255,255,0.12)}
+.attr-name{font-weight:600;font-size:.9rem;color:var(--text);margin-bottom:4px}
+.attr-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+.attr-tip{margin-top:6px;font-size:.78rem;color:var(--emerald)}
+.attr-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.attr-tag{font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--muted)}
+
+/* Weekend trip cards */
+.trip-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.trip{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .25s}
+.trip:hover{background:var(--card-hover);border-color:rgba(249,112,102,0.2);transform:translateY(-2px)}
+.trip-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.trip-dest{font-size:1rem;font-weight:700;color:var(--text)}
+.trip-country{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:6px}
+.trip-country.fr{background:rgba(96,165,250,0.15);color:#60a5fa}
+.trip-country.nl{background:rgba(251,146,60,0.15);color:#fb923c}
+.trip-country.de{background:rgba(251,191,36,0.15);color:var(--gold)}
+.trip-country.be{background:rgba(244,114,182,0.15);color:var(--pink)}
+.trip-country.lu{background:rgba(52,211,153,0.15);color:var(--emerald)}
+.trip-country.ch{background:rgba(248,113,113,0.15);color:#f87171}
+.trip-route{font-size:.82rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.trip-route .icon{color:var(--coral)}
+.trip-time{font-size:.78rem;color:var(--coral);font-weight:600;margin-bottom:10px}
+.trip-highlights{list-style:none}
+.trip-highlights li{padding:3px 0 3px 16px;font-size:.82rem;color:var(--muted);position:relative;line-height:1.5}
+.trip-highlights li::before{content:'';position:absolute;left:0;top:11px;width:5px;height:5px;border-radius:50%;background:var(--coral)}
+.trip-why{margin-top:10px;padding:8px 12px;background:rgba(251,191,36,0.06);border-radius:8px;font-size:.8rem;color:var(--gold);font-style:italic}
+
+/* Travel info */
+.info-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+.info-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.info-row{display:flex;align-items:baseline;gap:10px;padding:6px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--muted);min-width:110px;font-size:.8rem}
+.info-value{color:var(--text);font-weight:500}
+.info-note{margin-top:10px;font-size:.8rem;color:var(--muted);font-style:italic}
+.flight-leg{padding:10px 0;border-bottom:1px solid var(--border)}
+.flight-leg:last-child{border-bottom:none}
+.flight-route{font-weight:600;color:var(--text);font-size:.9rem;margin-bottom:4px}
+.flight-detail{font-size:.82rem;color:var(--muted)}
+.flight-badge{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(249,112,102,0.12);color:var(--coral);margin-left:6px}
+
+/* Map */
+#map{width:100%;height:350px;border-radius:14px;border:1px solid var(--border);margin-bottom:20px}
+.leaflet-popup-content-wrapper{background:var(--glass)!important;color:var(--text)!important;border-radius:10px!important;border:1px solid var(--border)!important;backdrop-filter:blur(12px)}
+.leaflet-popup-tip{background:var(--glass)!important}
+.leaflet-popup-content{font-family:'Inter',sans-serif!important;font-size:.85rem!important}
+
+/* Responsive */
+@media(max-width:640px){
+  .header h1{font-size:1.6rem}
+  .tab{padding:8px 12px;font-size:.75rem}
+  .panel{padding:10px 14px 40px}
+  .day-top{gap:6px}
+  .day-badge{margin-left:0}
+  .trip-grid{grid-template-columns:1fr}
+  #map{height:260px}
+}
+@media(min-width:640px){
+  .attr-grid{grid-template-columns:1fr 1fr}
+  .trip-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD GATE ===== -->
+<div class="pw-overlay" id="pw-overlay">
+  <div class="pw-title">EMILY'S SUMMER 2026</div>
+  <div class="pw-sub">Enter password to view trip details</div>
+  <input type="password" class="pw-input" id="pw-input" placeholder="Enter password" autofocus>
+  <button class="pw-btn" id="pw-btn">Unlock</button>
+  <div class="pw-error" id="pw-error">Incorrect password</div>
+</div>
+
+<!-- ===== APP CONTENT ===== -->
+<div class="app-content locked" id="app-content">
+
+<div class="header">
+  <h1>Emily's European Summer</h1>
+  <div class="sub">22 days across Germany, Greece & beyond</div>
+  <div class="dates">✈️ Jun 3 – Jun 25, 2026 &nbsp;·&nbsp; Las Vegas → Frankfurt</div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="tab-bar">
+  <div class="tab active" data-tab="itinerary">Itinerary</div>
+  <div class="tab" data-tab="athens">Athens</div>
+  <div class="tab" data-tab="dusseldorf">Düsseldorf</div>
+  <div class="tab" data-tab="weekends">Weekend Trips</div>
+  <div class="tab" data-tab="kl">KL Solo Guide</div>
+  <div class="tab" data-tab="info">Travel Info</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ITINERARY TAB -->
+<!-- ============================================================ -->
+<div class="panel active" id="tab-itinerary">
+  <div id="map"></div>
+
+  <!-- Phase 1: Arrival -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">✈️</span>
+      <span class="phase-title">Arrival & First Days</span>
+      <span class="phase-dates">Jun 3–5</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Wed Jun 3</span>
+        <span class="day-loc">Las Vegas → Boston → Frankfurt</span>
+        <span class="day-badge travel">Travel</span>
+      </div>
+      <ul class="day-items">
+        <li>Depart LAS 6:00 AM → Boston 2:09 PM (JetBlue B6478)</li>
+        <li>Connect BOS 4:45 PM → Frankfurt 5:45 AM +1 (Condor DE2039)</li>
+        <li>Seat 24A — window seat for the overnight flight</li>
+      </ul>
+      <div class="day-note">Pack snacks, headphones & a neck pillow — it's a long travel day!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Thu Jun 4</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Land Frankfurt 5:45 AM — Dad picks you up at arrivals</li>
+        <li>Drive to Kaiserslautern (~1.5 hours)</li>
+        <li>Settle into the apartment, shower, rest</li>
+        <li>Afternoon neighborhood walk when you're ready</li>
+        <li>Welcome dinner at a local restaurant</li>
+      </ul>
+      <div class="day-tip">Don't fight the jetlag too hard — stay up until 8-9 PM then crash. You'll adjust faster.</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Fri Jun 5</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Sleep in and recover from jetlag</li>
+        <li>Walk to city center — Stiftsplatz & Stiftskirche</li>
+        <li>Explore K in Lautern mall (shopping, food court)</li>
+        <li>Grab gelato and wander the pedestrian zone</li>
+        <li>Gartenschau park if the weather's nice (Japanese Garden!)</li>
+      </ul>
+      <div class="day-tip">See the KL Solo Guide tab for maps, bus info & more ideas!</div>
+    </div>
+  </div>
+
+  <!-- Phase 2: First Weekend -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">🚄</span>
+      <span class="phase-title">Weekend 1 — Paris by Train</span>
+      <span class="phase-dates">Jun 6–7</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sat Jun 6</span>
+        <span class="day-loc">Paris, France</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Early drive to Strasbourg station (~1.5h), park at Gare Centrale</li>
+        <li>TGV to Paris (~1h 46min) — enjoy the high-speed train!</li>
+        <li>Drop bags at hotel, head straight to the Eiffel Tower</li>
+        <li>Walk to Trocadéro for the iconic photo spot</li>
+        <li>Lunch at a Parisian café — croque monsieur & crêpes</li>
+        <li>Afternoon on the Champs-Élysées (shopping, macarons at Ladurée)</li>
+        <li>Evening Seine River cruise — Eiffel Tower lights up at dark!</li>
+      </ul>
+      <div class="day-note">Book Eiffel Tower tickets in advance at tour-eiffel.fr — they sell out!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sun Jun 7</span>
+        <span class="day-loc">Paris → KL</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Morning croissants from a boulangerie</li>
+        <li>Montmartre — Sacré-Cœur basilica, artist square, views</li>
+        <li>Walk through Le Marais for lunch & street food</li>
+        <li>Quick visit to Louvre exterior + Tuileries Garden</li>
+        <li>Afternoon TGV back to Strasbourg</li>
+        <li>Drive home to KL, order pizza, relax</li>
+      </ul>
+      <div class="day-tip">Check the Weekend Trips tab for alternative ideas — Amsterdam is another great option!</div>
+    </div>
+  </div>
+
+  <!-- Phase 3: Explorer Week -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">🗺️</span>
+      <span class="phase-title">Explorer Week</span>
+      <span class="phase-dates">Jun 8–13</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Mon Jun 8</span>
+        <span class="day-loc">Heidelberg (Day Trip)</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Train from KL Hauptbahnhof to Heidelberg (~1h 15min)</li>
+        <li>Walk up to Heidelberg Castle — incredible views of the Neckar River</li>
+        <li>Explore the Old Town & Hauptstraße (longest pedestrian street in Germany)</li>
+        <li>Cross the Old Bridge for photos</li>
+        <li>Lunch at a riverside café, gelato on Hauptstraße</li>
+        <li>Train back to KL in the afternoon</li>
+      </ul>
+      <div class="day-tip">Super safe and touristy — perfect first solo adventure by train!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Tue Jun 9</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Visit the Pfalzgalerie museum (art & crafts, free entry some days)</li>
+        <li>Shopping in the city center — check out German stores</li>
+        <li>Try a Döner Kebab (Germany's #1 fast food — you'll love it)</li>
+        <li>Afternoon at Gartenschau park or chill at the apartment</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Wed Jun 10</span>
+        <span class="day-loc">Mannheim (Day Trip)</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Quick train to Mannheim (~40 min)</li>
+        <li>Luisenpark — huge beautiful park with gondola rides and gardens</li>
+        <li>Technoseum — interactive science & technology museum</li>
+        <li>Shopping at Planken (pedestrian shopping street)</li>
+        <li>Train back in the afternoon</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Thu Jun 11</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Chill morning — sleep in, FaceTime friends back home</li>
+        <li>Monte Mare Waterpark — indoor/outdoor pools, slides, lazy river</li>
+        <li>Or catch a movie at UCI Kinowelt (check for English screenings)</li>
+        <li>Walk up to Humbergturm observation tower through the forest</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Fri Jun 12</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Rest day before the big Athens trip!</li>
+        <li>Revisit a favorite spot from the week</li>
+        <li>Help Dad pack for Greece</li>
+        <li>Get euros for Athens (ATMs work, but nice to have cash)</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sat Jun 13</span>
+        <span class="day-loc">Rhine Valley (Day Trip)</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Drive to Koblenz or Bingen (~1.5h)</li>
+        <li>Rhine River boat cruise past medieval castles</li>
+        <li>See the Lorelei Rock — legendary cliff above the Rhine</li>
+        <li>Stop at a riverside village for lunch</li>
+        <li>Drive back, finish packing for Athens</li>
+      </ul>
+      <div class="day-note">The Rhine castle cruise is one of the most scenic things in Germany!</div>
+    </div>
+  </div>
+
+  <!-- Phase 4: Athens -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">🏛️</span>
+      <span class="phase-title">Athens, Greece</span>
+      <span class="phase-dates">Jun 14–18</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sun Jun 14</span>
+        <span class="day-loc">Frankfurt → Athens</span>
+        <span class="day-badge travel">Travel</span>
+      </div>
+      <ul class="day-items">
+        <li>Morning in KL — brunch, last-minute packing</li>
+        <li>Drive to Frankfurt Airport (~1.5h)</li>
+        <li>FRA 5:35 PM → Athens 9:20 PM (SKY express GQ861)</li>
+        <li>Taxi to apartment — Acropolis Muses, Kalamiotou 19-23</li>
+        <li>Door code entry — check in and settle in</li>
+        <li>Late dinner at a nearby taverna in Plaka</li>
+      </ul>
+      <div class="day-tip">The apartment is right in the historic center — everything is walkable!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Mon Jun 15</span>
+        <span class="day-loc">Athens</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Early morning Acropolis visit (go by 8 AM to beat heat & crowds)</li>
+        <li>The Parthenon, Erechtheion, Temple of Athena Nike — jaw-dropping</li>
+        <li>Acropolis Museum — world-class, air-conditioned, glass floors over ruins</li>
+        <li>Lunch in Plaka — souvlaki, fresh Greek salad, cold frappe</li>
+        <li>Wander through Anafiotika — hidden Cycladic village under the Acropolis</li>
+        <li>Evening walk to Syntagma Square — watch the Evzones guard ceremony</li>
+      </ul>
+      <div class="day-note">See the Athens tab for the full guide with all things to do!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Tue Jun 16</span>
+        <span class="day-loc">Saronic Islands</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Full-day Saronic Islands boat cruise!</li>
+        <li>Depart from Piraeus port (tram from city center)</li>
+        <li>Visit Hydra — no cars allowed, crystal-clear water, donkey transport</li>
+        <li>Poros — charming harbor town, swimming stop</li>
+        <li>Aegina — famous for pistachios, Temple of Aphaia</li>
+        <li>Swimming stops, lunch on board, sunset on the water</li>
+        <li>Return to Athens in the evening</li>
+      </ul>
+      <div class="day-note">This is the island boat day! Book in advance — most popular day trip from Athens.</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Wed Jun 17</span>
+        <span class="day-loc">Athens</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Morning at Monastiraki Flea Market — souvenirs, vintage finds, leather goods</li>
+        <li>Temple of Olympian Zeus & Hadrian's Arch</li>
+        <li>Lunch: Athens food tour (Psyrri neighborhood — street food, baklava, loukoumades)</li>
+        <li>Afternoon: beach at Glyfada or Vouliagmeni (easy tram ride)</li>
+        <li>Cable car up Lycabettus Hill for the sunset — 360° views of the city</li>
+        <li>Final dinner in Athens — rooftop restaurant with Acropolis views</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Thu Jun 18</span>
+        <span class="day-loc">Athens → Frankfurt</span>
+        <span class="day-badge travel">Travel</span>
+      </div>
+      <ul class="day-items">
+        <li>Check out by 11:00 AM</li>
+        <li>Last-minute shopping on Ermou Street</li>
+        <li>ATH 12:15 PM → Frankfurt 2:25 PM (SKY express GQ860)</li>
+        <li>Pick up car at FRA, drive back to Kaiserslautern</li>
+        <li>Easy dinner at home — recover from an amazing week in Greece!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 5: Düsseldorf -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">🏙️</span>
+      <span class="phase-title">Düsseldorf</span>
+      <span class="phase-dates">Jun 20–22</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Fri Jun 19</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Recovery day after Greece — sleep in!</li>
+        <li>Unpack, do laundry, recharge</li>
+        <li>Afternoon walk or pool if you're feeling it</li>
+        <li>Easy evening — pack a small bag for Düsseldorf</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sat Jun 20</span>
+        <span class="day-loc">Düsseldorf</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Drive to Düsseldorf (~3 hours)</li>
+        <li>Check into hotel, drop bags</li>
+        <li>Straight to Japantown (Immermannstraße) — largest Japanese quarter in Europe!</li>
+        <li>Lunch: Takumi ramen (legendary — worth the line) or Naniwa udon</li>
+        <li>Browse Maruyasu Japanese supermarket & manga shops</li>
+        <li>Bakery My Heart — Japanese pastries and melon bread</li>
+        <li>Evening walk through the Altstadt (Old Town)</li>
+        <li>Spanish dinner — La Terraza or El Lazo for tapas</li>
+      </ul>
+      <div class="day-note">See the Düsseldorf tab for the full guide!</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Sun Jun 21</span>
+        <span class="day-loc">Düsseldorf</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Morning shopping on Königsallee (Kö) — luxury boulevard with canal</li>
+        <li>Walk through MedienHafen — Frank Gehry's wild buildings</li>
+        <li>Rhine Tower (Rheinturm) observation deck — 168m views!</li>
+        <li>Lunch: more Japantown or try a German Brauhaus</li>
+        <li>Stroll the Rhine River promenade</li>
+        <li>Dinner & relaxed evening</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Mon Jun 22</span>
+        <span class="day-loc">Düsseldorf → KL</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Morning coffee & last walk through the city</li>
+        <li>Kunstpalast art museum (if time allows)</li>
+        <li>Drive back to Kaiserslautern (~3 hours)</li>
+        <li>Relaxed evening at home</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 6: Final Days -->
+  <div class="phase">
+    <div class="phase-hdr">
+      <span class="phase-icon">🏡</span>
+      <span class="phase-title">Final Days</span>
+      <span class="phase-dates">Jun 23–25</span>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Tue Jun 23</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge solo">Solo</span>
+      </div>
+      <ul class="day-items">
+        <li>Revisit your favorite spots from the trip</li>
+        <li>Souvenir shopping for friends back home</li>
+        <li>Last Döner Kebab (you'll miss these!)</li>
+        <li>Take photos of your favorite KL spots</li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Wed Jun 24</span>
+        <span class="day-loc">Kaiserslautern</span>
+        <span class="day-badge together">Together</span>
+      </div>
+      <ul class="day-items">
+        <li>Last full day in Germany!</li>
+        <li>Pack suitcases — leave room for souvenirs</li>
+        <li>One more gelato walk through the city</li>
+        <li>Farewell dinner — Dad's pick for your favorite spot</li>
+      </ul>
+      <div class="day-tip">Weigh your bags! Condor economy allows 1 checked bag — check the Travel Info tab.</div>
+    </div>
+
+    <div class="day">
+      <div class="day-top">
+        <span class="day-date">Thu Jun 25</span>
+        <span class="day-loc">Frankfurt → Las Vegas</span>
+        <span class="day-badge departure">Departure</span>
+      </div>
+      <ul class="day-items">
+        <li>Wake up early — drive to Frankfurt Airport (~1.5h)</li>
+        <li>FRA 12:40 PM → Las Vegas 3:15 PM (Condor DE2062)</li>
+        <li>Seat 20A — window seat for the flight home</li>
+        <li>Direct flight — no connections!</li>
+      </ul>
+      <div class="day-note">Be at the airport by 10:00 AM for international departure. Auf Wiedersehen!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ATHENS TAB -->
+<!-- ============================================================ -->
+<div class="panel" id="tab-athens">
+  <div class="guide-intro">
+    4 days in the birthplace of civilization — ancient ruins, island boat trips, incredible food, and beaches on the Athens Riviera.
+    Your apartment (Acropolis Muses) is right in the historic center, steps from the Acropolis. Everything below is walkable or a short tram ride away.
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🏛️</span> Must-See Attractions</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Acropolis & Parthenon</div>
+        <div class="attr-desc">The ancient citadel on the hill — the Parthenon, Erechtheion, and Temple of Athena Nike. The most iconic ancient site in the world.</div>
+        <div class="attr-tip">Go by 8 AM to beat the heat and crowds. Wear good shoes — it's rocky and steep.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Acropolis Museum</div>
+        <div class="attr-desc">World-class modern museum built right over ancient ruins. Glass floors let you see excavations below. Parthenon Gallery on top floor has incredible views.</div>
+        <div class="attr-tip">Perfect for the hottest part of the afternoon — air-conditioned!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Ancient Agora</div>
+        <div class="attr-desc">The ancient marketplace and civic center of Athens. Temple of Hephaestus is one of the best-preserved Greek temples anywhere.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Temple of Olympian Zeus</div>
+        <div class="attr-desc">Massive ruins of the largest temple in ancient Greece. The remaining columns are jaw-dropping. Right next to Hadrian's Arch.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Syntagma Square</div>
+        <div class="attr-desc">Parliament building with the famous Evzones presidential guard. Watch the changing of the guard ceremony — they march in traditional uniforms with pom-pom shoes!</div>
+        <div class="attr-tip">Ceremony happens every hour on the hour, but the big one is Sundays at 11 AM.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Lycabettus Hill</div>
+        <div class="attr-desc">The highest point in Athens — take the funicular (cable car) or hike up for 360° views. Tiny chapel at the summit. THE sunset spot in Athens.</div>
+        <div class="attr-tip">Go for sunset — bring your camera. The view of the Acropolis lit up at dusk is unreal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🛍️</span> Neighborhoods & Shopping</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Plaka</div>
+        <div class="attr-desc">The oldest neighborhood in Athens. Winding cobblestone streets, colorful bougainvillea, cafés, souvenir shops, and street musicians. Magical at night.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Monastiraki Flea Market</div>
+        <div class="attr-desc">Huge open-air market with vintage finds, leather goods, jewelry, art prints, and souvenirs. Best on Sundays when it sprawls into surrounding streets.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Ermou Street</div>
+        <div class="attr-desc">Main pedestrian shopping boulevard connecting Syntagma to Monastiraki. International brands, Greek designers, and everything in between.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Anafiotika</div>
+        <div class="attr-desc">Hidden gem! A tiny Cycladic-style village with white-washed houses tucked right under the Acropolis. Feels like a Greek island in the middle of the city.</div>
+        <div class="attr-tip">Easy to miss — look for narrow stairs heading uphill from Plaka toward the Acropolis.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Psyrri</div>
+        <div class="attr-desc">The hip, artsy neighborhood. Street art everywhere, trendy cafés, vintage shops, and the best street food in Athens. Great for wandering.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>⛵</span> Island & Boat Trips</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Saronic Islands Day Cruise</div>
+        <div class="attr-desc">Full-day cruise visiting three islands: Hydra, Poros, and Aegina. Swimming stops, lunch on board, live music. Departs from Piraeus port (easy tram from city center). About 11 hours of island paradise.</div>
+        <div class="attr-tip">Book at least a week in advance — this is the #1 most popular day trip from Athens!</div>
+        <div class="attr-tags"><span class="attr-tag">Full Day</span><span class="attr-tag">3 Islands</span><span class="attr-tag">Swimming</span></div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Hydra</div>
+        <div class="attr-desc">The most beautiful Saronic island. No cars or motorbikes allowed — only donkeys, water taxis, and walking. Crystal-clear water, stone architecture, art galleries, and cats everywhere.</div>
+        <div class="attr-tags"><span class="attr-tag">No Cars</span><span class="attr-tag">Art</span><span class="attr-tag">Swimming</span></div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Aegina</div>
+        <div class="attr-desc">The pistachio island! Famous for its pistachio everything — ice cream, pastries, butter. Also home to the Temple of Aphaia, one of the best-preserved ancient temples in Greece.</div>
+        <div class="attr-tags"><span class="attr-tag">Pistachios</span><span class="attr-tag">Temple</span><span class="attr-tag">Beach</span></div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Cape Sounion (Temple of Poseidon)</div>
+        <div class="attr-desc">Not an island, but a coastal must-do. Ancient temple perched on dramatic sea cliffs about 1 hour south of Athens. Legendary sunset — this is where ancient Greeks watched for ships.</div>
+        <div class="attr-tip">Go for sunset. Half-day tours depart in the afternoon. Absolutely unforgettable.</div>
+        <div class="attr-tags"><span class="attr-tag">Sunset</span><span class="attr-tag">Temple</span><span class="attr-tag">Coastal</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🏖️</span> Beaches</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Glyfada Beach</div>
+        <div class="attr-desc">Popular sandy beach on the Athens Riviera. Easy tram ride from the center. Restaurants, cafés, and shops along the waterfront. Great for a half-day beach escape.</div>
+        <div class="attr-tags"><span class="attr-tag">Tram Access</span><span class="attr-tag">Sandy</span><span class="attr-tag">Restaurants</span></div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Vouliagmeni Beach & Lake</div>
+        <div class="attr-desc">Crystal-clear upscale beach plus a nearby thermal lake fed by underground springs. The lake is warm year-round and surrounded by cliffs — very unique.</div>
+        <div class="attr-tags"><span class="attr-tag">Thermal Lake</span><span class="attr-tag">Crystal Clear</span></div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Stavros Niarchos Foundation Beach (SNFCC)</div>
+        <div class="attr-desc">Free urban beach at the stunning Stavros Niarchos Cultural Center. Modern architecture, park, canal, and a saltwater swimming area. Very photogenic.</div>
+        <div class="attr-tags"><span class="attr-tag">Free</span><span class="attr-tag">Modern</span><span class="attr-tag">Park</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🍽️</span> Food & Markets</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Souvlaki Crawl</div>
+        <div class="attr-desc">You can't leave Athens without a souvlaki obsession. Try Kostas (tiny, legendary), Bairaktaris (huge portions), and Thanasis (near Monastiraki). Get chicken or pork wrapped in pita with tzatziki.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Loukoumades</div>
+        <div class="attr-desc">Greek honey donuts — crispy on the outside, fluffy inside, drizzled with honey and cinnamon. Try Lukumades in Psyrri for the Instagram-worthy version with Nutella and ice cream.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Varvakios Agora (Central Market)</div>
+        <div class="attr-desc">Athens' massive indoor market. Fish, meat, spices, olives, cheese, dried fruits. It's intense and fascinating — a real sensory experience.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Athens Food Tour</div>
+        <div class="attr-desc">Guided walking food tours through Psyrri and the Central Market. Sample gyros, spanakopita, baklava, Greek coffee, and local wines. Great way to learn the food scene.</div>
+        <div class="attr-tip">Book on GetYourGuide or Viator — morning tours are best before the heat.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Greek Frappe & Freddo</div>
+        <div class="attr-desc">The Greek iced coffee. Frappe is instant coffee shaken with ice (surprisingly good). Freddo Espresso is the fancier version. Order "metrio" for medium sugar. You'll drink 5 a day.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Rooftop Dinner with Acropolis View</div>
+        <div class="attr-desc">There's nothing like dinner with the Parthenon lit up above you. Try A for Athens rooftop bar, Couleur Locale, or the rooftop at Hotel Grande Bretagne.</div>
+        <div class="attr-tip">Book a table for sunset — these places fill up fast in summer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🎒</span> Adventure & Activities</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Kayaking on the Athens Riviera</div>
+        <div class="attr-desc">Stand-up paddleboarding and kayaking tours from Vouliagmeni. Paddle along the coastline, stop at hidden coves, and snorkel in crystal-clear water.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Bike Tour of Athens</div>
+        <div class="attr-desc">Guided cycling through ancient sites, neighborhoods, and hidden gems. Most tours are easy flat rides through the city center. Fun and different way to see everything.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">National Garden</div>
+        <div class="attr-desc">15 acres of shady gardens behind Parliament. Palm trees, ponds with turtles, a small zoo, ancient ruins scattered around. Perfect escape from the summer heat.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DÜSSELDORF TAB -->
+<!-- ============================================================ -->
+<div class="panel" id="tab-dusseldorf">
+  <div class="guide-intro">
+    Düsseldorf — fashion capital of Germany, home to the largest Japanese community in Europe, amazing architecture on the Rhine, and world-class shopping. 3 hours north of KL.
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🍜</span> Japantown (Immermannstraße)</div>
+    <div class="guide-intro">The biggest Japanese quarter in Europe! A whole district of authentic Japanese restaurants, supermarkets, bakeries, and shops. Think Little Tokyo, but in Germany.</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Takumi</div>
+        <div class="attr-desc">Legendary ramen shop — many say it's the best ramen in Europe. Rich tonkotsu broth, perfect noodles. There's always a line, but it moves fast and it's 100% worth it.</div>
+        <div class="attr-tip">Go right when they open to skip the line. Cash only!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Naniwa Noodle Soup</div>
+        <div class="attr-desc">Authentic Japanese udon and ramen in a cozy spot. The curry udon is incredible. Less crowded than Takumi, equally delicious.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Maruyasu Supermarket</div>
+        <div class="attr-desc">Japanese grocery store packed with snacks, drinks, bento boxes, mochi, pocky, and everything you've seen on TikTok. Stock up on Japanese candy!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Bakery My Heart</div>
+        <div class="attr-desc">Japanese-style bakery with melon bread, anpan (red bean buns), cream puffs, and matcha pastries. Everything is adorable and delicious.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Manga & Anime Shops</div>
+        <div class="attr-desc">Several Japanese bookstores and anime shops in the area. Manga, figurines, stationery, and Japanese pop culture goods. Heaven for anime fans.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Japanese Temple (EKŌ-Haus)</div>
+        <div class="attr-desc">A real Japanese Buddhist temple and cultural center with traditional garden. Free to visit — beautiful and serene. A bit outside Japantown but worth the detour.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🇪🇸</span> Spanish Restaurants</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">La Terraza</div>
+        <div class="attr-desc">Tapas and Spanish cuisine with a great outdoor terrace. Patatas bravas, jamón serrano, gambas al ajillo — the works. Lively atmosphere, especially on weekends.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">El Lazo</div>
+        <div class="attr-desc">Authentic Spanish restaurant with paella, churros, and an extensive tapas menu. Feels like you're in Barcelona. Great for a sit-down dinner.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Bar Olio</div>
+        <div class="attr-desc">Mediterranean small plates and Spanish-inspired dishes. Trendy vibe, great for sharing a bunch of different plates together.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🏙️</span> City Sightseeing</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Königsallee (Kö)</div>
+        <div class="attr-desc">Düsseldorf's most famous boulevard — luxury shopping with a canal running down the middle. Even if you don't buy anything, the window shopping and people-watching are elite.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Altstadt (Old Town)</div>
+        <div class="attr-desc">Known as "the longest bar in the world" — 260+ bars and restaurants in one neighborhood. Beautiful historic buildings, the Rhine waterfront, and amazing atmosphere day or night.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Rheinturm (Rhine Tower)</div>
+        <div class="attr-desc">168-meter observation tower right on the Rhine. Go up to the deck for panoramic views of the city, the river, and on clear days you can see Cologne Cathedral in the distance.</div>
+        <div class="attr-tip">The "decimal clock" on the tower's facade is the largest digital clock in the world!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">MedienHafen</div>
+        <div class="attr-desc">The old harbor transformed into an architectural showcase. Frank Gehry's famous twisted buildings, modern art, trendy restaurants. Very photogenic, especially at golden hour.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Rhine River Promenade</div>
+        <div class="attr-desc">Walk along the waterfront from the Altstadt to MedienHafen. River boats, bridges, street performers, and great views. Grab an ice cream and stroll.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Kunstpalast</div>
+        <div class="attr-desc">Major art museum with paintings, sculpture, photography, and fashion design. The collection spans from medieval to contemporary. Beautiful building too.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- WEEKEND TRIPS TAB -->
+<!-- ============================================================ -->
+<div class="panel" id="tab-weekends">
+  <div class="guide-intro">
+    All reachable by train from Kaiserslautern! Emily loves riding the train, so these are curated for the best rail journeys.
+    The first open weekend (Jun 6–7) is perfect for an overnight trip. Other destinations make great day trips on Saturdays.
+  </div>
+
+  <div class="trip-grid">
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Paris</span>
+        <span class="trip-country fr">France</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚄</span> Drive KL → Strasbourg (1.5h) → TGV to Paris (1h 46m)</div>
+      <div class="trip-time">~4 hours door to door · Overnight recommended</div>
+      <ul class="trip-highlights">
+        <li>Eiffel Tower — book tickets at tour-eiffel.fr in advance</li>
+        <li>Champs-Élysées & Arc de Triomphe — shopping, macarons at Ladurée</li>
+        <li>Montmartre & Sacré-Cœur — artists, views, crêpe stands</li>
+        <li>Seine River cruise — see the whole city from the water, Eiffel Tower lights up</li>
+        <li>Louvre (even just the pyramid + gardens), Tuileries</li>
+        <li>Le Marais — trendy neighborhood, falafel, vintage shops</li>
+      </ul>
+      <div class="trip-why">The most iconic city in the world — every 15-year-old should see the Eiffel Tower light up at night.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Amsterdam</span>
+        <span class="trip-country nl">Netherlands</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚄</span> Train KL → Mannheim (40m) → ICE to Amsterdam (3.5h)</div>
+      <div class="trip-time">~4.5 hours · Overnight recommended</div>
+      <ul class="trip-highlights">
+        <li>Canal boat tour — the best way to see the city</li>
+        <li>Anne Frank House — powerful, moving, must-book in advance</li>
+        <li>Rijksmuseum — Rembrandt, Vermeer, the Night Watch</li>
+        <li>Vondelpark — rent bikes and ride like a local</li>
+        <li>Albert Cuyp Market — Dutch stroopwafels, cheese, street food</li>
+        <li>NDSM Wharf — industrial art district, street art, food trucks</li>
+      </ul>
+      <div class="trip-why">The coolest city vibes in Europe — canals, bikes, street food, and the most laid-back energy anywhere.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Heidelberg</span>
+        <span class="trip-country de">Germany</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚆</span> Regional train from KL Hbf (1h 15min direct)</div>
+      <div class="trip-time">~1.25 hours · Perfect day trip</div>
+      <ul class="trip-highlights">
+        <li>Heidelberg Castle — fairy-tale ruins above the Neckar River</li>
+        <li>Alte Brücke (Old Bridge) — one of the most photographed spots in Germany</li>
+        <li>Hauptstraße — Europe's longest pedestrian shopping street</li>
+        <li>Philosophers' Walk — hillside path with postcard views</li>
+        <li>Gelato on the riverside, student town energy</li>
+      </ul>
+      <div class="trip-why">Fairy-tale castle + river views + great shopping = perfect solo or together day trip.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Cologne</span>
+        <span class="trip-country de">Germany</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚄</span> Train KL → Mannheim (40m) → ICE to Cologne (1h)</div>
+      <div class="trip-time">~2.5 hours · Day trip or overnight</div>
+      <ul class="trip-highlights">
+        <li>Cologne Cathedral — climb all 533 steps to the top for incredible views</li>
+        <li>Chocolate Museum — Lindt factory with chocolate fountain, tastings, history</li>
+        <li>Rhine River waterfront — walk the bridge, love locks, street music</li>
+        <li>Belgian Quarter — trendy shops, cafés, street art</li>
+        <li>Hohe Straße & Schildergasse — two huge pedestrian shopping streets</li>
+      </ul>
+      <div class="trip-why">The Chocolate Museum alone is worth the trip. Plus that cathedral will blow your mind.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Strasbourg</span>
+        <span class="trip-country fr">France</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚗</span> Drive from KL (1.5h) or train via Mannheim (~2h)</div>
+      <div class="trip-time">~1.5 hours by car · Day trip</div>
+      <ul class="trip-highlights">
+        <li>Petite France — storybook half-timbered houses on canals</li>
+        <li>Strasbourg Cathedral — astronomical clock, climb 330 steps</li>
+        <li>Tarte flambée (Flammkuchen) — the local specialty, like a thin crispy pizza</li>
+        <li>Canal boat tour through the old quarter</li>
+        <li>French bakeries — croissants, pain au chocolat, éclairs</li>
+      </ul>
+      <div class="trip-why">Feels like stepping into a fairy tale — half French, half German, 100% charming.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Rhine Valley Cruise</span>
+        <span class="trip-country de">Germany</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚆</span> Train KL → Koblenz or Bingen (~1.5h)</div>
+      <div class="trip-time">~1.5 hours + boat cruise · Day trip</div>
+      <ul class="trip-highlights">
+        <li>Castle-lined Rhine boat cruise — medieval fortresses on every hilltop</li>
+        <li>Lorelei Rock — legendary cliff where a siren lured sailors</li>
+        <li>Marksburg Castle — only hilltop castle never destroyed</li>
+        <li>Stop at charming wine villages along the river</li>
+        <li>The train ride along the Rhine is scenic on its own!</li>
+      </ul>
+      <div class="trip-why">Real medieval castles from a boat on the river — the train ride there is half the adventure.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Luxembourg City</span>
+        <span class="trip-country lu">Luxembourg</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚆</span> Train from KL via Saarbrücken (~2.5h) or drive (2h)</div>
+      <div class="trip-time">~2.5 hours · Day trip</div>
+      <ul class="trip-highlights">
+        <li>Casemates du Bock — underground tunnels carved into rock cliffs</li>
+        <li>Grund Valley — dramatic gorge with a riverside village inside the city</li>
+        <li>Chemin de la Corniche — "Europe's most beautiful balcony" walkway</li>
+        <li>All public transport is FREE in Luxembourg (buses, trams, trains)</li>
+        <li>Compact old town — easy to see everything in a day</li>
+      </ul>
+      <div class="trip-why">Visit another country for the day! Free public transport + dramatic gorge views + underground tunnels = adventure.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Bruges</span>
+        <span class="trip-country be">Belgium</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚄</span> Train KL → Brussels (3h ICE) → IC to Bruges (1h)</div>
+      <div class="trip-time">~4 hours · Overnight recommended</div>
+      <ul class="trip-highlights">
+        <li>Canal boat ride through medieval streets — incredibly beautiful</li>
+        <li>Belfry Tower — climb 366 steps for views over the whole city</li>
+        <li>Belgian chocolate shops — literal heaven, sampling everywhere</li>
+        <li>Belgian waffles — Liège-style from a street cart (crispy, chewy, amazing)</li>
+        <li>Grote Markt — stunning medieval main square with guild houses</li>
+      </ul>
+      <div class="trip-why">Most Instagrammable city in Europe — chocolate, waffles, canals, and medieval charm overload.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Black Forest (Freiburg)</span>
+        <span class="trip-country de">Germany</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚆</span> Train KL → Karlsruhe → Freiburg (~3h) or drive (2h)</div>
+      <div class="trip-time">~3 hours by train · Day trip</div>
+      <ul class="trip-highlights">
+        <li>Triberg Waterfalls — tallest waterfalls in Germany</li>
+        <li>Cuckoo clock shops — the Black Forest invented them</li>
+        <li>Freiburg old town — beautiful university city with streams in the streets</li>
+        <li>Black Forest Cake — eat it where it was invented</li>
+        <li>Scenic Höllental (Hell Valley) train through the mountains</li>
+      </ul>
+      <div class="trip-why">Real-life fairy tale forest — the train ride through the valleys is one of the most scenic in Germany.</div>
+    </div>
+
+    <div class="trip">
+      <div class="trip-top">
+        <span class="trip-dest">Swiss Alps (Lucerne)</span>
+        <span class="trip-country ch">Switzerland</span>
+      </div>
+      <div class="trip-route"><span class="icon">🚄</span> Train KL → Mannheim → Basel (3h) → Lucerne (1h)</div>
+      <div class="trip-time">~4.5 hours · Overnight recommended</div>
+      <ul class="trip-highlights">
+        <li>Chapel Bridge — oldest covered wooden bridge in Europe (with flowers!)</li>
+        <li>Lake Lucerne boat cruise — emerald water, snow-capped Alps all around</li>
+        <li>Mt. Pilatus cable car — ride up to 7,000 ft with insane views</li>
+        <li>Swiss chocolate shops — buy ALL the chocolate</li>
+        <li>The train ride through Switzerland is peak scenic rail</li>
+      </ul>
+      <div class="trip-why">The most dramatic mountain scenery in Europe — the train ride through Switzerland alone is worth the entire trip.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- KL SOLO GUIDE TAB -->
+<!-- ============================================================ -->
+<div class="panel" id="tab-kl">
+  <div class="guide-intro">
+    Your guide to Kaiserslautern for the weekdays when Dad's at work! KL is a safe, walkable city with plenty to do.
+    Most things are within a 15-20 minute walk from the apartment.
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🚌</span> Getting Around</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Walking</div>
+        <div class="attr-desc">The city center is very compact. From the apartment, most attractions are 10-20 minutes on foot. The pedestrian zone (Fackelstraße/Eisenbahnstraße) is the main shopping area.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">SWK Buses</div>
+        <div class="attr-desc">KL has a bus system. Buy a Tageskarte (day ticket) from the machine at any stop. Google Maps shows bus routes and times accurately. Buses are safe and easy to use.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Trains (Day Trips)</div>
+        <div class="attr-desc">KL Hauptbahnhof (main train station) connects to Mannheim, Heidelberg, Saarbrücken, and beyond. Buy tickets at the machine or on the DB Navigator app. Trains run frequently.</div>
+        <div class="attr-tip">Download the DB Navigator app — it shows schedules, platforms, and you can buy tickets on your phone.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🎯</span> Things to Do in KL</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Gartenschau (Garden Show Park)</div>
+        <div class="attr-desc">Huge park with a Japanese Garden, dinosaur exhibit, mini golf, paddle boats on the lake, playgrounds, and flower gardens. You could spend a whole day here. Beautiful in June.</div>
+        <div class="attr-tip">The Japanese Garden inside is really peaceful — great for photos.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Pfalzgalerie Museum</div>
+        <div class="attr-desc">Art and crafts museum in a beautiful building. Paintings, sculptures, design objects. Small but well-curated. Sometimes has special exhibitions. Near the city center.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">K in Lautern Mall</div>
+        <div class="attr-desc">Shopping center right in the heart of the city. German stores, H&M, food court, electronics. Good place to browse on a rainy day or grab lunch.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Humbergturm</div>
+        <div class="attr-desc">Observation tower in the forest, about a 30-minute walk from the city. Nice hike through the woods, then climb the tower for views over KL and the Palatinate Forest. Free!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Monte Mare Waterpark</div>
+        <div class="attr-desc">Indoor and outdoor pools, water slides, lazy river, and a sauna area. Perfect for a fun afternoon, especially if it's hot or rainy. Bus accessible.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">UCI Kinowelt</div>
+        <div class="attr-desc">Movie theater in KL. Check for OV (Original Version) or OmU (Original with German subtitles) screenings — those are in English! Popcorn is sweet in Germany (but they have salty too).</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">City Walking Loop</div>
+        <div class="attr-desc">Walk from the apartment → Stiftsplatz → Stiftskirche → Schillerplatz → Fackelstraße (shopping) → Fruchthalle → back. About 30 minutes, hits all the landmarks.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🚆</span> Solo Day Trips by Train</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Heidelberg (~1h 15min)</div>
+        <div class="attr-desc">THE best solo day trip. Castle, Old Town, Old Bridge — it's touristy, super safe, English-friendly, and incredibly beautiful. Can't go wrong here.</div>
+        <div class="attr-tip">Trains run frequently. Check DB Navigator for the next departure. Get a Gruppentageskarte if traveling with 2+ people.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Mannheim (~40 min)</div>
+        <div class="attr-desc">Easy, quick train ride. Luisenpark is beautiful (huge park with gondola rides). Planken is the main shopping street. Technoseum is a great interactive science museum.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Saarbrücken (~1 hour)</div>
+        <div class="attr-desc">Capital of the Saarland region, right near the French border. Franco-German culture, nice shopping, pretty old town along the Saar River. A different vibe from KL.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🍕</span> Food Spots</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Döner Kebab</div>
+        <div class="attr-desc">Germany's #1 fast food! Lamb or chicken in bread with salad and sauce. Cheap, filling, delicious. You'll find Döner shops everywhere in the center. Try one your first week — you'll be hooked.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Gelato / Eiscafés</div>
+        <div class="attr-desc">Italian ice cream shops are all over German cities. Way better than American ice cream shops. Look for "Eiscafé" signs. Get 2-3 scoops in a waffle cone.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">German Bakeries (Bäckerei)</div>
+        <div class="attr-desc">Fresh pretzels (Brezel), pastries, and sandwiches every morning. Grab a Laugenbrötchen (pretzel roll) for breakfast. Bakeries open early and are on every block.</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Pizza & Pasta</div>
+        <div class="attr-desc">Italian restaurants are everywhere in Germany and they're consistently good. Great backup when you're craving something familiar.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🇩🇪</span> Useful German Phrases</div>
+    <div class="attr-grid">
+      <div class="attr">
+        <div class="attr-name">Basics</div>
+        <div class="attr-desc">
+          Hallo — Hello<br>
+          Danke / Danke schön — Thank you / Thank you very much<br>
+          Bitte — Please / You're welcome<br>
+          Tschüss — Bye<br>
+          Sprechen Sie Englisch? — Do you speak English?<br>
+          Ich hätte gerne... — I would like...<br>
+          Wo ist...? — Where is...?<br>
+          Die Rechnung, bitte — The check, please
+        </div>
+        <div class="attr-tip">Almost everyone under 40 in Germany speaks English. Don't be afraid to ask!</div>
+      </div>
+      <div class="attr">
+        <div class="attr-name">Emergency Info</div>
+        <div class="attr-desc">
+          Emergency (police/ambulance): <strong>112</strong><br>
+          Home base: Hartmannstraße 31-33, 67655 Kaiserslautern<br>
+          Always carry your phone + a card with the address<br>
+          Germany is very safe — KL especially so
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TRAVEL INFO TAB -->
+<!-- ============================================================ -->
+<div class="panel" id="tab-info">
+
+  <div class="info-block">
+    <div class="info-title">✈️ Outbound Flights — Wed Jun 3</div>
+    <div class="flight-leg">
+      <div class="flight-route">Las Vegas → Boston <span class="flight-badge">Leg 1</span></div>
+      <div class="flight-detail">JetBlue B6478 · Economy</div>
+      <div class="flight-detail">Depart LAS 6:00 AM · Arrive BOS 2:09 PM</div>
+    </div>
+    <div class="flight-leg">
+      <div class="flight-route">Boston → Frankfurt <span class="flight-badge">Leg 2 · Overnight</span></div>
+      <div class="flight-detail">Condor DE2039 · Economy · Seat 24A (window)</div>
+      <div class="flight-detail">Depart BOS 4:45 PM · Arrive FRA 5:45 AM +1 (Thu Jun 4)</div>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Booking Ref</span>
+      <span class="info-value">15635316-02</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Hold Baggage</span>
+      <span class="info-value">1 checked bag included</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Passenger</span>
+      <span class="info-value">Emily Elizabeth Cleary</span>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">✈️ Return Flight — Thu Jun 25</div>
+    <div class="flight-leg">
+      <div class="flight-route">Frankfurt → Las Vegas <span class="flight-badge">Direct</span></div>
+      <div class="flight-detail">Condor DE2062 · Economy · Seat 20A (window)</div>
+      <div class="flight-detail">Depart FRA 12:40 PM · Arrive LAS 3:15 PM (same day)</div>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Booking Ref</span>
+      <span class="info-value">15635316-02</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Hold Baggage</span>
+      <span class="info-value">0 checked bags — add or change before travel</span>
+    </div>
+    <div class="info-note">⚠️ No checked bag on the return flight! Add one before Jun 25 or pack carry-on only.</div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">🇬🇷 Athens Flights — Jun 14 & 18</div>
+    <div class="flight-leg">
+      <div class="flight-route">Frankfurt → Athens <span class="flight-badge">Jun 14</span></div>
+      <div class="flight-detail">SKY express GQ861</div>
+      <div class="flight-detail">Depart FRA 5:35 PM · Arrive ATH 9:20 PM (2h 45m)</div>
+    </div>
+    <div class="flight-leg">
+      <div class="flight-route">Athens → Frankfurt <span class="flight-badge">Jun 18</span></div>
+      <div class="flight-detail">SKY express GQ860</div>
+      <div class="flight-detail">Depart ATH 12:15 PM · Arrive FRA 2:25 PM (3h 10m)</div>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Confirmation</span>
+      <span class="info-value">FX4K8A</span>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">🏠 Athens Accommodation — Jun 14–18</div>
+    <div class="info-row">
+      <span class="info-label">Hotel</span>
+      <span class="info-value">Acropolis Muses — Downtown Luxury Apartments</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Address</span>
+      <span class="info-value">Kalamiotou 19-23, Athens 10560, Greece</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Check-in</span>
+      <span class="info-value">Sun Jun 14, 3:00 PM – 11:00 PM</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Check-out</span>
+      <span class="info-value">Thu Jun 18, by 11:00 AM</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Entry</span>
+      <span class="info-value">Door code (details in booking confirmation)</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Booking #</span>
+      <span class="info-value">5392664665</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">PIN</span>
+      <span class="info-value">6318</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Host Phone</span>
+      <span class="info-value">+30 697 340 1696</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Cancellation</span>
+      <span class="info-value">Free until May 30, 2026 11:59 PM (EEST)</span>
+    </div>
+    <div class="info-note">Right in the historic center — Acropolis, Plaka, and Monastiraki are all walkable!</div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">🏙️ Düsseldorf — Jun 20–22</div>
+    <div class="info-row">
+      <span class="info-label">Status</span>
+      <span class="info-value">No reservations yet — book hotel before trip</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Distance</span>
+      <span class="info-value">~3 hours drive from Kaiserslautern</span>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">🏡 Home Base — Kaiserslautern</div>
+    <div class="info-row">
+      <span class="info-label">Address</span>
+      <span class="info-value">Hartmannstraße 31-33, 67655 Kaiserslautern</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Emergency</span>
+      <span class="info-value">112 (police & ambulance throughout Europe)</span>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">📋 Packing Checklist</div>
+    <div class="info-row">
+      <span class="info-label">Documents</span>
+      <span class="info-value">Passport (valid!), booking confirmations, travel insurance card</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Tech</span>
+      <span class="info-value">Phone + charger, EU power adapter (Type C/F), portable battery, headphones</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Clothing</span>
+      <span class="info-value">Layers (June can be 65-85°F), comfy walking shoes, swimsuit for Athens/pools</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Misc</span>
+      <span class="info-value">Sunscreen, sunglasses, small backpack/daypack, water bottle, snacks for flights</span>
+    </div>
+    <div class="info-note">June in Germany averages 65-80°F. Athens will be hot (80-95°F). Pack for both!</div>
+  </div>
+</div>
+
+</div><!-- /app-content -->
+
+<!-- ============================================================ -->
+<!-- SCRIPTS -->
+<!-- ============================================================ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ---- Tab Switching ---- */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'itinerary' && window._map) window._map.invalidateSize();
+  });
+});
+
+/* ---- Map ---- */
+function initMap() {
+  const map = L.map('map', { scrollWheelZoom: false, zoomControl: true }).setView([48.5, 10], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO', maxZoom: 18
+  }).addTo(map);
+
+  const locs = [
+    { lat: 49.4447, lng: 7.7689, name: 'Kaiserslautern', sub: 'Home Base · Jun 3–25', color: '#34d399', r: 10 },
+    { lat: 50.0379, lng: 8.5622, name: 'Frankfurt Airport', sub: 'FRA · Arrivals & Departures', color: '#94a3b8', r: 7 },
+    { lat: 37.9838, lng: 23.7275, name: 'Athens', sub: 'Greece · Jun 14–18', color: '#f97066', r: 10 },
+    { lat: 51.2277, lng: 6.7735, name: 'Düsseldorf', sub: 'Germany · Jun 20–22', color: '#f97066', r: 10 },
+    { lat: 48.8566, lng: 2.3522, name: 'Paris', sub: 'Weekend Trip Option', color: '#fbbf24', r: 7 },
+    { lat: 52.3676, lng: 4.9041, name: 'Amsterdam', sub: 'Weekend Trip Option', color: '#fbbf24', r: 7 },
+    { lat: 49.4094, lng: 8.6942, name: 'Heidelberg', sub: 'Day Trip', color: '#fbbf24', r: 6 },
+    { lat: 50.9375, lng: 6.9603, name: 'Cologne', sub: 'Day Trip', color: '#fbbf24', r: 6 },
+    { lat: 48.5734, lng: 7.7521, name: 'Strasbourg', sub: 'Day Trip', color: '#fbbf24', r: 6 },
+    { lat: 50.3607, lng: 7.5986, name: 'Koblenz', sub: 'Rhine Valley Cruise', color: '#fbbf24', r: 6 },
+    { lat: 49.6117, lng: 6.1300, name: 'Luxembourg', sub: 'Day Trip', color: '#fbbf24', r: 6 },
+    { lat: 51.2093, lng: 3.2247, name: 'Bruges', sub: 'Weekend Trip', color: '#fbbf24', r: 6 },
+    { lat: 47.9990, lng: 7.8421, name: 'Freiburg', sub: 'Black Forest', color: '#fbbf24', r: 6 },
+    { lat: 47.0502, lng: 8.3093, name: 'Lucerne', sub: 'Swiss Alps', color: '#fbbf24', r: 6 },
+  ];
+
+  locs.forEach(l => {
+    L.circleMarker([l.lat, l.lng], {
+      radius: l.r, fillColor: l.color, fillOpacity: 0.85, color: '#fff', weight: l.r > 7 ? 2 : 1, opacity: 0.6
+    }).addTo(map).bindPopup(`<strong>${l.name}</strong><br><span style="color:#94a3b8">${l.sub}</span>`);
+  });
+
+  // Route lines
+  const klFra = [[49.4447,7.7689],[50.0379,8.5622]];
+  const fraAth = [[50.0379,8.5622],[37.9838,23.7275]];
+  const klDus = [[49.4447,7.7689],[51.2277,6.7735]];
+
+  L.polyline(klFra, {color:'#34d399',weight:2,opacity:0.4,dashArray:'6,8'}).addTo(map);
+  L.polyline(fraAth, {color:'#f97066',weight:2,opacity:0.4,dashArray:'6,8'}).addTo(map);
+  L.polyline(klDus, {color:'#f97066',weight:2,opacity:0.4,dashArray:'6,8'}).addTo(map);
+
+  window._map = map;
+}
+
+/* ---- Password Gate ---- */
+const HASH = '672e4ee394ab20af046975c199b754ca240a2fb18a18072d3bdc1bd6c8ec2471';
+
+async function sha256(s) {
+  const data = new TextEncoder().encode(s);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function tryUnlock() {
+  const input = document.getElementById('pw-input');
+  const h = await sha256(input.value);
+  if (h === HASH) {
+    sessionStorage.setItem('emily-unlocked', '1');
+    unlock();
+  } else {
+    document.getElementById('pw-error').classList.add('show');
+    input.classList.add('shake');
+    setTimeout(() => { input.classList.remove('shake'); }, 400);
+    input.value = '';
+    input.focus();
+  }
+}
+
+function unlock() {
+  document.getElementById('pw-overlay').style.display = 'none';
+  document.getElementById('app-content').classList.remove('locked');
+  initMap();
+}
+
+// Check session
+if (sessionStorage.getItem('emily-unlocked') === '1') {
+  unlock();
+}
+
+document.getElementById('pw-btn').addEventListener('click', tryUnlock);
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryUnlock();
+  document.getElementById('pw-error').classList.remove('show');
+});
+</script>
+</body>
+</html>

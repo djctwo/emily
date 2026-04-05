@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Emily's European Summer 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Emily Trip">
@@ -28,7 +29,7 @@
     background: linear-gradient(135deg, #7eb8ff, #a78bfa, #38bdf8);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.pw-sub { color: #6b7280; font-size: 13px; }
+.pw-sub { color: #7c8494; font-size: 13px; }
 .pw-input {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 15px; padding: 12px 20px; width: 280px;
@@ -56,15 +57,17 @@
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: #0b0e1a;
-    color: #c8cdd8;
+    color: #d0d5e0;
     min-height: 100vh;
+    font-size: 13px;
 }
 body::before {
     content: '';
     position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
     background: radial-gradient(ellipse at 20% 20%, rgba(88, 130, 255, 0.06) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.03) 0%, transparent 40%);
+                radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.03) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 90%, rgba(251, 191, 36, 0.02) 0%, transparent 40%);
     z-index: 0; pointer-events: none;
 }
 
@@ -90,9 +93,16 @@ body::before {
 }
 .topbar .meta {
     display: flex; gap: 16px; align-items: center;
-    font-size: 12px; color: #6b7280;
+    font-size: 12px; color: #7c8494;
 }
-.topbar .countdown { color: #38bdf8; font-weight: 600; font-size: 13px; }
+.topbar .countdown {
+    font-weight: 700; font-size: 14px;
+    background: linear-gradient(90deg, #38bdf8, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    padding: 3px 10px;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 6px;
+}
 
 /* Tabs */
 .tab-bar {
@@ -107,7 +117,7 @@ body::before {
 .tab-btn {
     padding: 10px 18px;
     font-size: 12px; font-weight: 600; font-family: inherit;
-    color: #6b7280; background: transparent;
+    color: #7c8494; background: transparent;
     border: 1px solid transparent; border-bottom: none;
     border-radius: 8px 8px 0 0;
     cursor: pointer; transition: all 0.2s;
@@ -155,7 +165,7 @@ body::before {
     line-height: 1.2;
 }
 .stat-label {
-    font-size: 10px; color: #6b7280;
+    font-size: 10px; color: #7c8494;
     text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;
 }
 
@@ -174,7 +184,7 @@ body::before {
 }
 .map-header h2 { font-size: 14px; font-weight: 600; color: #e2e8f0; }
 .map-legend { display: flex; gap: 14px; font-size: 11px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 6px; color: #6b7280; }
+.legend-item { display: flex; align-items: center; gap: 6px; color: #7c8494; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
 #map { height: 380px; width: 100%; background: #0b0e1a; }
 
@@ -198,7 +208,7 @@ body::before {
 .phase-icon { font-size: 1.3rem; }
 .phase-title { font-size: 15px; font-weight: 700; color: #e2e8f0; }
 .phase-dates {
-    margin-left: auto; font-size: 11px; color: #6b7280;
+    margin-left: auto; font-size: 11px; color: #7c8494;
     background: rgba(15, 19, 35, 0.8); padding: 4px 12px; border-radius: 8px;
     border: 1px solid rgba(99, 130, 255, 0.08);
 }
@@ -222,7 +232,7 @@ body::before {
     margin-bottom: 10px; flex-wrap: wrap;
 }
 .day-date { font-weight: 700; font-size: 13px; color: #e2e8f0; min-width: 80px; }
-.day-loc { font-size: 12px; color: #8b94a6; }
+.day-loc { font-size: 12px; color: #9ba3b5; }
 .day-badge {
     font-size: 10px; font-weight: 700; padding: 3px 10px;
     border-radius: 6px; margin-left: auto;
@@ -235,7 +245,7 @@ body::before {
 .day-items { list-style: none; padding-left: 8px; }
 .day-items li {
     position: relative; padding: 3px 0 3px 16px;
-    font-size: 12px; color: #8b94a6; line-height: 1.6;
+    font-size: 13px; color: #9ba3b5; line-height: 1.6;
 }
 .day-items li::before {
     content: ''; position: absolute; left: 0; top: 11px;
@@ -244,10 +254,10 @@ body::before {
 }
 .day-note {
     margin-top: 10px; padding: 8px 14px;
-    background: rgba(248, 113, 113, 0.06);
-    border-left: 3px solid rgba(248, 113, 113, 0.4);
+    background: rgba(251, 191, 36, 0.06);
+    border-left: 3px solid rgba(251, 191, 36, 0.4);
     border-radius: 0 8px 8px 0;
-    font-size: 11px; color: #f87171;
+    font-size: 11px; color: #fbbf24;
 }
 .day-tip {
     margin-top: 10px; padding: 8px 14px;
@@ -259,7 +269,7 @@ body::before {
 
 /* Guide sections (Athens, Düsseldorf, KL) */
 .guide-intro {
-    font-size: 13px; color: #8b94a6; margin-bottom: 24px;
+    font-size: 13px; color: #9ba3b5; margin-bottom: 24px;
     line-height: 1.7; padding: 16px 20px;
     background: rgba(15, 19, 35, 0.8);
     border: 1px solid rgba(99, 130, 255, 0.08);
@@ -288,7 +298,7 @@ body::before {
 .attr-name a { color: #7eb8ff; text-decoration: none; transition: color 0.2s; }
 .attr-name a:hover { color: #a78bfa; text-decoration: underline; }
 .attr-name a::after { content: ' ↗'; font-size: 10px; opacity: 0.5; }
-.attr-desc { font-size: 12px; color: #8b94a6; line-height: 1.6; }
+.attr-desc { font-size: 13px; color: #9ba3b5; line-height: 1.6; }
 .attr-img {
     width: 100%; height: 160px; object-fit: cover; border-radius: 8px;
     margin-bottom: 10px; opacity: 0.9; transition: opacity 0.3s;
@@ -327,12 +337,12 @@ body::before {
 .trip-country.be { background: rgba(244, 114, 182, 0.12); color: #f472b6; }
 .trip-country.lu { background: rgba(52, 211, 153, 0.12); color: #34d399; }
 .trip-country.ch { background: rgba(248, 113, 113, 0.12); color: #f87171; }
-.trip-route { font-size: 12px; color: #8b94a6; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.trip-route { font-size: 12px; color: #9ba3b5; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
 .trip-route .icon { color: #a78bfa; }
 .trip-time { font-size: 11px; color: #a78bfa; font-weight: 600; margin-bottom: 10px; }
 .trip-highlights { list-style: none; }
 .trip-highlights li {
-    padding: 3px 0 3px 16px; font-size: 12px; color: #8b94a6;
+    padding: 3px 0 3px 16px; font-size: 13px; color: #9ba3b5;
     position: relative; line-height: 1.6;
 }
 .trip-highlights li::before {
@@ -341,8 +351,8 @@ body::before {
 }
 .trip-why {
     margin-top: 12px; padding: 10px 14px;
-    background: rgba(168, 139, 250, 0.06);
-    border-radius: 8px; font-size: 11px; color: #a78bfa; font-style: italic;
+    background: rgba(251, 191, 36, 0.06);
+    border-radius: 8px; font-size: 12px; color: #fbbf24; font-style: italic;
 }
 
 /* Travel info */
@@ -363,7 +373,7 @@ body::before {
     border-bottom: 1px solid rgba(99, 130, 255, 0.04);
 }
 .info-row:last-child { border-bottom: none; }
-.info-label { color: #6b7280; min-width: 110px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.info-label { color: #7c8494; min-width: 110px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .info-value { color: #c8cdd8; font-weight: 500; }
 .info-note {
     margin: 0; padding: 10px 20px; font-size: 11px; color: #fbbf24;
@@ -373,7 +383,7 @@ body::before {
 .flight-leg { padding: 12px 20px; border-bottom: 1px solid rgba(99, 130, 255, 0.06); }
 .flight-leg:last-child { border-bottom: none; }
 .flight-route-text { font-weight: 600; color: #e2e8f0; font-size: 13px; margin-bottom: 4px; }
-.flight-detail { font-size: 12px; color: #8b94a6; }
+.flight-detail { font-size: 12px; color: #9ba3b5; }
 .flight-badge {
     display: inline-block; font-size: 9px; font-weight: 700;
     padding: 2px 8px; border-radius: 4px;
@@ -454,7 +464,7 @@ body::before {
 .weather-city { font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
 .weather-icon { font-size: 24px; margin-bottom: 4px; }
 .weather-temp { font-size: 18px; font-weight: 800; color: #38bdf8; }
-.weather-desc { font-size: 10px; color: #6b7280; margin-top: 2px; }
+.weather-desc { font-size: 10px; color: #7c8494; margin-top: 2px; }
 .weather-rain { font-size: 10px; color: #a78bfa; margin-top: 4px; }
 
 /* Destination cards */
@@ -492,16 +502,16 @@ body::before {
 }
 .dest-card-name { font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
 .dest-card-country { font-size: 10px; color: #a78bfa; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-.dest-card-highlights { font-size: 11px; color: #8b94a6; line-height: 1.6; }
+.dest-card-highlights { font-size: 11px; color: #9ba3b5; line-height: 1.6; }
 
 /* Visual flight cards */
 .flight-visual { padding: 14px 20px; border-bottom: 1px solid rgba(99, 130, 255, 0.05); }
 .flight-visual:last-of-type { border-bottom: none; }
-.flight-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 10px; }
+.flight-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #7c8494; margin-bottom: 10px; }
 .flight-route-vis { display: flex; align-items: center; gap: 12px; }
 .flight-city { text-align: center; min-width: 60px; }
 .flight-code { font-size: 20px; font-weight: 800; color: #e2e8f0; }
-.flight-city-name { font-size: 10px; color: #6b7280; }
+.flight-city-name { font-size: 10px; color: #7c8494; }
 .flight-time { font-size: 12px; color: #a78bfa; font-weight: 500; margin-top: 2px; }
 .flight-arrow { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; min-width: 40px; }
 .flight-arrow::before { content: ''; width: 100%; height: 1px; background: linear-gradient(90deg, rgba(99,130,255,0.1), rgba(99,130,255,0.4), rgba(99,130,255,0.1)); }
@@ -527,22 +537,25 @@ body::before {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 5px 0;
+    padding: 10px 4px;
+    min-height: 44px;
     cursor: pointer;
     transition: opacity 0.2s;
     font-size: 12px;
     color: #c8cdd8;
 }
 .pack-box {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(99, 130, 255, 0.3);
-    border-radius: 4px;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(99, 130, 255, 0.4);
+    border-radius: 5px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    background: rgba(99, 130, 255, 0.05);
 }
+.pack-item:hover .pack-box { border-color: rgba(99, 130, 255, 0.6); background: rgba(99, 130, 255, 0.1); }
 .pack-item.packed .pack-box {
     background: rgba(52, 211, 153, 0.2); border-color: #34d399;
 }
@@ -572,7 +585,7 @@ body::before {
     border-bottom: 1px solid rgba(99, 130, 255, 0.05);
 }
 .emergency-item:last-child { border-bottom: none; }
-.emergency-label { color: #6b7280; }
+.emergency-label { color: #7c8494; }
 .emergency-value { color: #e2e8f0; font-weight: 500; }
 
 /* Day tags */
@@ -661,7 +674,7 @@ body::before {
     border-bottom: 1px solid rgba(99, 130, 255, 0.05);
 }
 .lang-phrase:last-child { border-bottom: none; }
-.lang-en { color: #6b7280; }
+.lang-en { color: #7c8494; }
 .lang-local { color: #e2e8f0; font-weight: 500; }
 
 /* Overnights row */
@@ -676,7 +689,7 @@ body::before {
 }
 .overnights-label {
     font-size: 10px;
-    color: #6b7280;
+    color: #7c8494;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 4px;
@@ -726,20 +739,22 @@ body::before {
     background: linear-gradient(90deg, #34d399, #38bdf8);
     transition: width 0.4s ease;
 }
-.bp-status { font-size: 12px; color: #6b7280; padding: 0 20px 12px; }
+.bp-status { font-size: 12px; color: #7c8494; padding: 0 20px 12px; }
 .bp-items { padding: 0 16px 16px; }
 .bp-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 8px 12px; border-radius: 8px;
+    padding: 10px 12px; min-height: 44px; border-radius: 8px;
     cursor: pointer; transition: all 0.2s;
 }
 .bp-item:hover { background: rgba(99, 130, 255, 0.06); }
 .bp-check {
     width: 18px; height: 18px; border-radius: 5px;
-    border: 2px solid rgba(99, 130, 255, 0.2);
+    border: 2px solid rgba(99, 130, 255, 0.35);
+    background: rgba(99, 130, 255, 0.05);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: all 0.2s; font-size: 11px;
 }
+.bp-item:hover .bp-check { border-color: rgba(99, 130, 255, 0.6); background: rgba(99, 130, 255, 0.1); }
 .bp-item.booked .bp-check {
     background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #34d399;
 }
@@ -771,7 +786,7 @@ body::before {
 .booking-link-icon { font-size: 20px; flex-shrink: 0; }
 .booking-link-text { flex: 1; }
 .booking-link-title { font-size: 13px; font-weight: 600; color: #e2e8f0; }
-.booking-link-desc { font-size: 10px; color: #6b7280; margin-top: 2px; }
+.booking-link-desc { font-size: 10px; color: #7c8494; margin-top: 2px; }
 .booking-link-arrow { color: #4b5563; font-size: 14px; }
 
 /* Restaurant wishlist */
@@ -789,8 +804,8 @@ body::before {
 .resto-city { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #a78bfa; margin-bottom: 4px; }
 .resto-name { font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
 .resto-type { font-size: 11px; color: #fbbf24; margin-bottom: 6px; }
-.resto-desc { font-size: 11px; color: #8b94a6; line-height: 1.6; }
-.resto-must { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(251, 146, 60, 0.15); color: #fb923c; margin-left: 6px; }
+.resto-desc { font-size: 11px; color: #9ba3b5; line-height: 1.6; }
+.resto-must { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(251, 191, 36, 0.15); color: #fbbf24; margin-left: 6px; }
 
 /* Photo spots */
 .photo-grid {
@@ -807,7 +822,7 @@ body::before {
 .photo-city { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #a78bfa; margin-bottom: 4px; }
 .photo-spot { font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
 .photo-icon { font-size: 20px; float: right; margin: -2px 0 0 8px; }
-.photo-tip { font-size: 11px; color: #8b94a6; line-height: 1.6; }
+.photo-tip { font-size: 11px; color: #9ba3b5; line-height: 1.6; }
 .photo-time { font-size: 10px; color: #38bdf8; font-weight: 600; margin-top: 4px; }
 
 /* Share toast */
@@ -842,6 +857,103 @@ body::before {
     .booking-links { grid-template-columns: 1fr; }
 }
 
+/* Collapsible sections */
+.collapsible-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(99, 130, 255, 0.08);
+    user-select: none;
+    transition: background 0.2s;
+}
+.collapsible-hdr:hover { background: rgba(99, 130, 255, 0.04); }
+.collapsible-hdr h3 {
+    font-size: 14px; font-weight: 600; color: #e2e8f0;
+    display: flex; align-items: center; gap: 8px;
+}
+.collapsible-arrow {
+    font-size: 12px; color: #7c8494;
+    transition: transform 0.25s ease;
+}
+.collapsible-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+}
+.collapsible-body > div { overflow: hidden; }
+.collapsible-section.open .collapsible-body { grid-template-rows: 1fr; }
+.collapsible-section.open .collapsible-arrow { transform: rotate(180deg); }
+.collapsible-section {
+    background: rgba(15, 19, 35, 0.8);
+    border: 1px solid rgba(99, 130, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+/* Itinerary compact overview */
+.overview-strip {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+.overview-strip .stat-card {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 12px;
+    margin-bottom: 0;
+}
+.overview-strip .stat-value { font-size: 20px; }
+
+/* Mobile bottom nav */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(11, 14, 26, 0.97);
+    border-top: 1px solid rgba(99, 130, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+}
+.mobile-nav-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #7c8494;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    min-width: 56px;
+    -webkit-tap-highlight-color: transparent;
+}
+.mobile-nav-btn .nav-icon { font-size: 20px; }
+.mobile-nav-btn.active { color: #a78bfa; }
+.mobile-nav-btn:active { color: #e2e8f0; }
+
+@media (max-width: 768px) {
+    .mobile-nav { display: block; }
+    .tab-bar { display: none; }
+    body { padding-bottom: 72px; }
+}
+
 /* Print styles */
 @media print {
     body { background: #fff; color: #1a1a2e; }
@@ -865,6 +977,9 @@ body::before {
     }
     .attr-desc, .day-items li, .trip-highlights li, .guide-intro { color: #4b5563; }
     .map-container, .trip-timeline { display: none; }
+    .collapsible-section { border: 1px solid #ddd; }
+    .collapsible-body { grid-template-rows: 1fr !important; }
+    .collapsible-arrow { display: none; }
     #map { display: none; }
     a { color: #1a1a2e !important; }
     .day-badge, .tag, .attr-tag, .flight-badge { border: 1px solid #ccc; }
@@ -913,29 +1028,13 @@ body::before {
 <!-- ============================================================ -->
 <div class="panel active" id="tab-itinerary">
 
-  <!-- Stats -->
-  <div class="stats-row">
+  <!-- Compact Stats + Overnights -->
+  <div class="overview-strip">
     <div class="stat-card"><div class="stat-value">22</div><div class="stat-label">Days</div></div>
     <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Countries</div></div>
     <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">Flights</div></div>
     <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Cities</div></div>
     <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Island Cruise</div></div>
-  </div>
-
-  <!-- Overnights -->
-  <div class="overnights-row">
-    <div class="overnights-label">Overnights</div>
-    <div class="overnights-value">
-      <span class="on-city">Kaiserslautern</span> x 14
-      <span class="on-sep">|</span>
-      <span class="on-city">Paris</span> x 1
-      <span class="on-sep">|</span>
-      <span class="on-city">Athens</span> x 4
-      <span class="on-sep">|</span>
-      <span class="on-city">Düsseldorf</span> x 2
-      <span class="on-sep">|</span>
-      <span class="on-city">In-flight</span> x 1
-    </div>
   </div>
 
   <!-- Trip Timeline -->
@@ -965,82 +1064,6 @@ body::before {
     <div class="tl-segment tl-depart" title="Jun 25 — Fly Home"><span class="tl-num">25</span><span class="tl-label">Home</span></div>
   </div>
 
-  <!-- Weather -->
-  <div class="weather-row">
-    <div class="weather-card">
-      <div class="weather-city">Kaiserslautern</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-temp">72°F</div>
-      <div class="weather-desc">Partly sunny</div>
-      <div class="weather-rain">30% rain chance</div>
-    </div>
-    <div class="weather-card">
-      <div class="weather-city">Paris</div>
-      <div class="weather-icon">⛅</div>
-      <div class="weather-temp">70°F</div>
-      <div class="weather-desc">Mix of sun & clouds</div>
-      <div class="weather-rain">35% rain chance</div>
-    </div>
-    <div class="weather-card">
-      <div class="weather-city">Athens</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-temp">88°F</div>
-      <div class="weather-desc">Hot & sunny</div>
-      <div class="weather-rain">5% rain chance</div>
-    </div>
-    <div class="weather-card">
-      <div class="weather-city">Düsseldorf</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-temp">72°F</div>
-      <div class="weather-desc">Warm & pleasant</div>
-      <div class="weather-rain">30% rain chance</div>
-    </div>
-  </div>
-
-  <!-- Destination Cards -->
-  <div class="dest-cards">
-    <div class="dest-card">
-      <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(99,130,255,0.3), rgba(56,189,248,0.2))">🏰</div>
-      <div class="dest-card-body">
-        <div class="dest-card-name">Kaiserslautern</div>
-        <div class="dest-card-country">Germany · Home Base</div>
-        <div class="dest-card-highlights">Parks, gelato, döner kebabs, pedestrian shopping, forest hikes</div>
-      </div>
-    </div>
-    <div class="dest-card">
-      <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(96,165,250,0.3), rgba(168,85,247,0.2))">🗼</div>
-      <div class="dest-card-body">
-        <div class="dest-card-name">Paris</div>
-        <div class="dest-card-country">France · Weekend 1</div>
-        <div class="dest-card-highlights">Eiffel Tower, Montmartre, Seine cruise, macarons, shopping</div>
-      </div>
-    </div>
-    <div class="dest-card">
-      <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(168,85,247,0.3), rgba(248,113,113,0.2))">🏛️</div>
-      <div class="dest-card-body">
-        <div class="dest-card-name">Athens</div>
-        <div class="dest-card-country">Greece · Jun 14–18</div>
-        <div class="dest-card-highlights">Acropolis, island cruise, beach, souvlaki, rooftop dinners</div>
-      </div>
-    </div>
-    <div class="dest-card">
-      <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(52,211,153,0.3), rgba(56,189,248,0.2))">🏙️</div>
-      <div class="dest-card-body">
-        <div class="dest-card-name">Düsseldorf</div>
-        <div class="dest-card-country">Germany · Jun 20–22</div>
-        <div class="dest-card-highlights">Japantown, ramen, Kö shopping, Rhine Tower, Gehry buildings</div>
-      </div>
-    </div>
-    <div class="dest-card">
-      <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(250,204,21,0.3), rgba(52,211,153,0.2))">⛴️</div>
-      <div class="dest-card-body">
-        <div class="dest-card-name">Rhine Valley</div>
-        <div class="dest-card-country">Germany · Day Trip</div>
-        <div class="dest-card-highlights">Castle cruise, Lorelei Rock, medieval villages, river views</div>
-      </div>
-    </div>
-  </div>
-
   <!-- Map -->
   <div class="map-container">
     <div class="map-header">
@@ -1052,6 +1075,104 @@ body::before {
       </div>
     </div>
     <div id="map"></div>
+  </div>
+
+  <!-- Weather & Destinations (collapsible) -->
+  <div class="collapsible-section" id="cs-overview">
+    <div class="collapsible-hdr" onclick="toggleSection('cs-overview')">
+      <h3>🌤️ Weather & Destinations</h3>
+      <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-body"><div>
+      <div class="weather-row" style="padding:16px 20px 0">
+        <div class="weather-card">
+          <div class="weather-city">Kaiserslautern</div>
+          <div class="weather-icon">🌤️</div>
+          <div class="weather-temp">72°F</div>
+          <div class="weather-desc">Partly sunny</div>
+          <div class="weather-rain">30% rain chance</div>
+        </div>
+        <div class="weather-card">
+          <div class="weather-city">Paris</div>
+          <div class="weather-icon">⛅</div>
+          <div class="weather-temp">70°F</div>
+          <div class="weather-desc">Mix of sun & clouds</div>
+          <div class="weather-rain">35% rain chance</div>
+        </div>
+        <div class="weather-card">
+          <div class="weather-city">Athens</div>
+          <div class="weather-icon">☀️</div>
+          <div class="weather-temp">88°F</div>
+          <div class="weather-desc">Hot & sunny</div>
+          <div class="weather-rain">5% rain chance</div>
+        </div>
+        <div class="weather-card">
+          <div class="weather-city">Düsseldorf</div>
+          <div class="weather-icon">🌤️</div>
+          <div class="weather-temp">72°F</div>
+          <div class="weather-desc">Warm & pleasant</div>
+          <div class="weather-rain">30% rain chance</div>
+        </div>
+      </div>
+      <div class="dest-cards" style="padding:16px 20px">
+        <div class="dest-card">
+          <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(99,130,255,0.3), rgba(56,189,248,0.2))">🏰</div>
+          <div class="dest-card-body">
+            <div class="dest-card-name">Kaiserslautern</div>
+            <div class="dest-card-country">Germany · Home Base</div>
+            <div class="dest-card-highlights">Parks, gelato, döner kebabs, pedestrian shopping, forest hikes</div>
+          </div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(96,165,250,0.3), rgba(168,85,247,0.2))">🗼</div>
+          <div class="dest-card-body">
+            <div class="dest-card-name">Paris</div>
+            <div class="dest-card-country">France · Weekend 1</div>
+            <div class="dest-card-highlights">Eiffel Tower, Montmartre, Seine cruise, macarons, shopping</div>
+          </div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(168,85,247,0.3), rgba(248,113,113,0.2))">🏛️</div>
+          <div class="dest-card-body">
+            <div class="dest-card-name">Athens</div>
+            <div class="dest-card-country">Greece · Jun 14–18</div>
+            <div class="dest-card-highlights">Acropolis, island cruise, beach, souvlaki, rooftop dinners</div>
+          </div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(52,211,153,0.3), rgba(56,189,248,0.2))">🏙️</div>
+          <div class="dest-card-body">
+            <div class="dest-card-name">Düsseldorf</div>
+            <div class="dest-card-country">Germany · Jun 20–22</div>
+            <div class="dest-card-highlights">Japantown, ramen, Kö shopping, Rhine Tower, Gehry buildings</div>
+          </div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-card-hero" style="background:linear-gradient(135deg, rgba(250,204,21,0.3), rgba(52,211,153,0.2))">⛴️</div>
+          <div class="dest-card-body">
+            <div class="dest-card-name">Rhine Valley</div>
+            <div class="dest-card-country">Germany · Day Trip</div>
+            <div class="dest-card-highlights">Castle cruise, Lorelei Rock, medieval villages, river views</div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Overnights -->
+  <div class="overnights-row">
+    <div class="overnights-label">Overnights</div>
+    <div class="overnights-value">
+      <span class="on-city">Kaiserslautern</span> x 14
+      <span class="on-sep">|</span>
+      <span class="on-city">Paris</span> x 1
+      <span class="on-sep">|</span>
+      <span class="on-city">Athens</span> x 4
+      <span class="on-sep">|</span>
+      <span class="on-city">Düsseldorf</span> x 2
+      <span class="on-sep">|</span>
+      <span class="on-city">In-flight</span> x 1
+    </div>
   </div>
 
   <!-- Phase 1: Arrival -->
@@ -1189,9 +1310,9 @@ body::before {
       </div>
       <ul class="day-items">
         <li>Visit the Pfalzgalerie museum (art & crafts, free entry some days)</li>
-        <li>Shopping in the city center — check out German stores</li>
-        <li>Try a Döner Kebab (Germany's #1 fast food — you'll love it)</li>
-        <li>Afternoon at Gartenschau park or chill at the apartment</li>
+        <li>Shopping in the city center — H&M, German stores, souvenirs</li>
+        <li>Afternoon at Volkspark — different vibe from Gartenschau, more chill</li>
+        <li>Try a Currywurst from a street stand (another German classic!)</li>
       </ul>
     </div>
 
@@ -1202,10 +1323,10 @@ body::before {
         <span class="day-badge solo">Solo</span>
       </div>
       <ul class="day-items">
-        <li>K in Lautern mall — shopping, food court, browse German stores</li>
-        <li>Pfalzgalerie museum — art & crafts exhibitions</li>
-        <li>Walk to Volkspark for a change of scenery</li>
-        <li>Try a Currywurst from a street stand (another German classic)</li>
+        <li>K in Lautern mall — browse German stores, grab lunch at the food court</li>
+        <li>Walk to Fruchthalle — historic concert hall with cool architecture</li>
+        <li>Stiftskirche (church) — climb the tower if it's open, nice city views</li>
+        <li>Treat yourself to a waffle or crêpe from a café in the pedestrian zone</li>
       </ul>
     </div>
 
@@ -2132,7 +2253,15 @@ body::before {
 <!-- ============================================================ -->
 <div class="panel" id="tab-info">
 
-  <div class="info-block">
+  <!-- BOOKINGS SECTION (open by default) -->
+  <div class="collapsible-section open" id="cs-bookings">
+    <div class="collapsible-hdr" onclick="toggleSection('cs-bookings')">
+      <h3>✈️ Flights & Accommodation</h3>
+      <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-body"><div>
+
+  <div class="info-block" style="border-radius:0;border-left:none;border-right:none;margin-bottom:0">
     <div class="info-title">✈️ Outbound Flights — Wed Jun 3</div>
     <div class="flight-visual">
       <div class="flight-label">Leg 1 — JetBlue B6478</div>
@@ -2279,7 +2408,18 @@ body::before {
     </div>
   </div>
 
-  <div class="info-block">
+    </div></div>
+  </div><!-- /cs-bookings -->
+
+  <!-- PREP SECTION -->
+  <div class="collapsible-section open" id="cs-prep">
+    <div class="collapsible-hdr" onclick="toggleSection('cs-prep')">
+      <h3>📋 Prep & Packing</h3>
+      <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-body"><div>
+
+  <div class="info-block" style="border-radius:0;border-left:none;border-right:none;margin-bottom:0">
     <div class="info-title">📋 Packing Checklist <span style="font-size:11px;color:#6b7280;font-weight:400;margin-left:8px" id="pack-progress"></span></div>
     <div class="packing-grid" id="packing-grid">
       <div class="packing-category">
@@ -2334,61 +2474,8 @@ body::before {
     <div class="info-note">June in Germany averages 65-80°F. Athens will be hot (80-95°F). Pack for both!</div>
   </div>
 
-  <div class="info-block">
-    <div class="info-title">🆘 Emergency Information</div>
-    <div class="emergency-grid">
-      <div class="emergency-card">
-        <h4>Emergency Numbers</h4>
-        <div class="emergency-item"><span class="emergency-label">All Europe</span><span class="emergency-value">112</span></div>
-        <div class="emergency-item"><span class="emergency-label">Germany Police</span><span class="emergency-value">110</span></div>
-        <div class="emergency-item"><span class="emergency-label">Greece Police</span><span class="emergency-value">100</span></div>
-        <div class="emergency-item"><span class="emergency-label">Greece Ambulance</span><span class="emergency-value">166</span></div>
-      </div>
-      <div class="emergency-card">
-        <h4>Addresses</h4>
-        <div class="emergency-item"><span class="emergency-label">KL Home</span><span class="emergency-value">Hartmannstr. 31-33</span></div>
-        <div class="emergency-item"><span class="emergency-label">Athens</span><span class="emergency-value">Kalamiotou 19-23</span></div>
-        <div class="emergency-item"><span class="emergency-label">Athens Host</span><span class="emergency-value">+30 697 340 1696</span></div>
-      </div>
-      <div class="emergency-card">
-        <h4>US Embassies</h4>
-        <div class="emergency-item"><span class="emergency-label">Germany</span><span class="emergency-value">+49 30 8305-0</span></div>
-        <div class="emergency-item"><span class="emergency-label">Greece</span><span class="emergency-value">+30 210 721 2951</span></div>
-        <div class="emergency-item"><span class="emergency-label">France</span><span class="emergency-value">+33 1 43 12 22 22</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="info-block">
-    <div class="info-title">🗣️ Language Cheat Sheet</div>
-    <div class="lang-grid">
-      <div class="lang-section">
-        <h4>🇬🇷 Greek (for Athens)</h4>
-        <div class="lang-phrase"><span class="lang-en">Hello</span><span class="lang-local">Yassas (Γεια σας)</span></div>
-        <div class="lang-phrase"><span class="lang-en">Thank you</span><span class="lang-local">Efharisto (Ευχαριστώ)</span></div>
-        <div class="lang-phrase"><span class="lang-en">Please</span><span class="lang-local">Parakalo (Παρακαλώ)</span></div>
-        <div class="lang-phrase"><span class="lang-en">Yes / No</span><span class="lang-local">Neh / Ohi (Ναι / Όχι)</span></div>
-        <div class="lang-phrase"><span class="lang-en">How much?</span><span class="lang-local">Poso kani? (Πόσο κάνει;)</span></div>
-        <div class="lang-phrase"><span class="lang-en">Delicious!</span><span class="lang-local">Nostimo! (Νόστιμο!)</span></div>
-        <div class="lang-phrase"><span class="lang-en">The check please</span><span class="lang-local">Ton logariasmo (Τον λογαριασμό)</span></div>
-        <div class="lang-phrase"><span class="lang-en">Do you speak English?</span><span class="lang-local">Milate Anglika?</span></div>
-      </div>
-      <div class="lang-section">
-        <h4>🇩🇪 German (for KL & Düsseldorf)</h4>
-        <div class="lang-phrase"><span class="lang-en">Hello</span><span class="lang-local">Hallo</span></div>
-        <div class="lang-phrase"><span class="lang-en">Thank you</span><span class="lang-local">Danke schön</span></div>
-        <div class="lang-phrase"><span class="lang-en">Please</span><span class="lang-local">Bitte</span></div>
-        <div class="lang-phrase"><span class="lang-en">Bye</span><span class="lang-local">Tschüss</span></div>
-        <div class="lang-phrase"><span class="lang-en">I would like...</span><span class="lang-local">Ich hätte gerne...</span></div>
-        <div class="lang-phrase"><span class="lang-en">Where is...?</span><span class="lang-local">Wo ist...?</span></div>
-        <div class="lang-phrase"><span class="lang-en">The check please</span><span class="lang-local">Die Rechnung, bitte</span></div>
-        <div class="lang-phrase"><span class="lang-en">Do you speak English?</span><span class="lang-local">Sprechen Sie Englisch?</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Booking Progress -->
-  <div class="bottom-row">
+  <!-- Booking Progress + Quick Book inside Prep -->
+  <div class="bottom-row" style="padding:0 16px 16px">
     <div class="bottom-panel">
       <div class="panel-header">Booking Progress <span style="font-size:11px;color:#6b7280;font-weight:400" id="bp-progress-text"></span></div>
       <div class="bp-bar-bg"><div class="bp-bar-fill" id="bp-bar-fill" style="width:0%"></div></div>
@@ -2445,8 +2532,82 @@ body::before {
     </div>
   </div>
 
-  <!-- Restaurant Wishlist + Photo Spots -->
-  <div class="bottom-row">
+    </div></div>
+  </div><!-- /cs-prep -->
+
+  <!-- HELP SECTION -->
+  <div class="collapsible-section" id="cs-help">
+    <div class="collapsible-hdr" onclick="toggleSection('cs-help')">
+      <h3>🆘 Emergency & Language</h3>
+      <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-body"><div>
+
+  <div class="info-block" style="border-radius:0;border-left:none;border-right:none;margin-bottom:0">
+    <div class="info-title">🆘 Emergency Information</div>
+    <div class="emergency-grid">
+      <div class="emergency-card">
+        <h4>Emergency Numbers</h4>
+        <div class="emergency-item"><span class="emergency-label">All Europe</span><span class="emergency-value">112</span></div>
+        <div class="emergency-item"><span class="emergency-label">Germany Police</span><span class="emergency-value">110</span></div>
+        <div class="emergency-item"><span class="emergency-label">Greece Police</span><span class="emergency-value">100</span></div>
+        <div class="emergency-item"><span class="emergency-label">Greece Ambulance</span><span class="emergency-value">166</span></div>
+      </div>
+      <div class="emergency-card">
+        <h4>Addresses</h4>
+        <div class="emergency-item"><span class="emergency-label">KL Home</span><span class="emergency-value">Hartmannstr. 31-33</span></div>
+        <div class="emergency-item"><span class="emergency-label">Athens</span><span class="emergency-value">Kalamiotou 19-23</span></div>
+        <div class="emergency-item"><span class="emergency-label">Athens Host</span><span class="emergency-value">+30 697 340 1696</span></div>
+      </div>
+      <div class="emergency-card">
+        <h4>US Embassies</h4>
+        <div class="emergency-item"><span class="emergency-label">Germany</span><span class="emergency-value">+49 30 8305-0</span></div>
+        <div class="emergency-item"><span class="emergency-label">Greece</span><span class="emergency-value">+30 210 721 2951</span></div>
+        <div class="emergency-item"><span class="emergency-label">France</span><span class="emergency-value">+33 1 43 12 22 22</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-title">🗣️ Language Cheat Sheet</div>
+    <div class="lang-grid">
+      <div class="lang-section">
+        <h4>🇬🇷 Greek (for Athens)</h4>
+        <div class="lang-phrase"><span class="lang-en">Hello</span><span class="lang-local">Yassas (Γεια σας)</span></div>
+        <div class="lang-phrase"><span class="lang-en">Thank you</span><span class="lang-local">Efharisto (Ευχαριστώ)</span></div>
+        <div class="lang-phrase"><span class="lang-en">Please</span><span class="lang-local">Parakalo (Παρακαλώ)</span></div>
+        <div class="lang-phrase"><span class="lang-en">Yes / No</span><span class="lang-local">Neh / Ohi (Ναι / Όχι)</span></div>
+        <div class="lang-phrase"><span class="lang-en">How much?</span><span class="lang-local">Poso kani? (Πόσο κάνει;)</span></div>
+        <div class="lang-phrase"><span class="lang-en">Delicious!</span><span class="lang-local">Nostimo! (Νόστιμο!)</span></div>
+        <div class="lang-phrase"><span class="lang-en">The check please</span><span class="lang-local">Ton logariasmo (Τον λογαριασμό)</span></div>
+        <div class="lang-phrase"><span class="lang-en">Do you speak English?</span><span class="lang-local">Milate Anglika?</span></div>
+      </div>
+      <div class="lang-section">
+        <h4>🇩🇪 German (for KL & Düsseldorf)</h4>
+        <div class="lang-phrase"><span class="lang-en">Hello</span><span class="lang-local">Hallo</span></div>
+        <div class="lang-phrase"><span class="lang-en">Thank you</span><span class="lang-local">Danke schön</span></div>
+        <div class="lang-phrase"><span class="lang-en">Please</span><span class="lang-local">Bitte</span></div>
+        <div class="lang-phrase"><span class="lang-en">Bye</span><span class="lang-local">Tschüss</span></div>
+        <div class="lang-phrase"><span class="lang-en">I would like...</span><span class="lang-local">Ich hätte gerne...</span></div>
+        <div class="lang-phrase"><span class="lang-en">Where is...?</span><span class="lang-local">Wo ist...?</span></div>
+        <div class="lang-phrase"><span class="lang-en">The check please</span><span class="lang-local">Die Rechnung, bitte</span></div>
+        <div class="lang-phrase"><span class="lang-en">Do you speak English?</span><span class="lang-local">Sprechen Sie Englisch?</span></div>
+      </div>
+    </div>
+  </div>
+
+    </div></div>
+  </div><!-- /cs-help -->
+
+  <!-- DISCOVER SECTION -->
+  <div class="collapsible-section" id="cs-discover">
+    <div class="collapsible-hdr" onclick="toggleSection('cs-discover')">
+      <h3>🍽️ Restaurants & Photo Spots</h3>
+      <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-body"><div>
+
+  <div class="bottom-row" style="padding:16px">
     <div class="bottom-panel">
       <div class="panel-header">Restaurant Wishlist</div>
       <div class="restaurant-grid">
@@ -2537,6 +2698,9 @@ body::before {
     </div>
   </div>
 
+    </div></div>
+  </div><!-- /cs-discover -->
+
 </div>
 
 </div><!-- /container -->
@@ -2544,10 +2708,25 @@ body::before {
 
 <div class="share-toast" id="share-toast">Itinerary copied to clipboard!</div>
 
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mobile-nav-btn active" data-tab="itinerary"><span class="nav-icon">📅</span>Itinerary</button>
+    <button class="mobile-nav-btn" data-tab="athens"><span class="nav-icon">🏛️</span>Athens</button>
+    <button class="mobile-nav-btn" data-tab="dusseldorf"><span class="nav-icon">🏙️</span>Düsseldorf</button>
+    <button class="mobile-nav-btn" data-tab="info"><span class="nav-icon">📋</span>Info</button>
+  </div>
+</nav>
+
 <!-- ============================================================ -->
 <!-- SCRIPTS -->
 <!-- ============================================================ -->
 <script>
+/* ---- Collapsible Sections ---- */
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
 /* ---- Countdown ---- */
 (function() {
   const trip = new Date('2026-06-03T06:00:00');
@@ -2559,14 +2738,25 @@ body::before {
 })();
 
 /* ---- Tab Switching ---- */
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  const desktopTab = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+  if (desktopTab) desktopTab.classList.add('active');
+  const mobileTab = document.querySelector('.mobile-nav-btn[data-tab="' + tabName + '"]');
+  if (mobileTab) mobileTab.classList.add('active');
+  document.getElementById('tab-' + tabName).classList.add('active');
+  if (tabName === 'itinerary' && window._map) window._map.invalidateSize();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 document.querySelectorAll('.tab-btn').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-    if (tab.dataset.tab === 'itinerary' && window._map) window._map.invalidateSize();
-  });
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
 /* ---- Map ---- */

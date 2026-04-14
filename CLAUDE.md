@@ -1,7 +1,14 @@
-# Emily Summer Trip Dashboard
+# Emily Project
 
-## Overview
-Interactive travel dashboard for Emily's 22-day European summer trip (Jun 3-25, 2026). Password-protected, hosted on GitHub Pages. Midnight Aurora dark theme matching the Melissa summer-trip dashboard style.
+Repo home for Emily-related planning: travel dashboards, visit plans, and future trips.
+
+## Current Focus
+**Summer 2026 Trip** — interactive dashboard for Emily's 22-day European trip (Jun 3-25, 2026). Password-protected, hosted on GitHub Pages. Midnight Aurora dark theme matching the Melissa summer-trip dashboard style.
+
+**Visit Plan 2026-2027** — `Visit_Plan_2026-2027.md` — optimized PTO plan for 2 visits (Dec 2026 winter + Jul 2027 summer) totaling 31 days with Emily for 17 PTO days.
+
+## Repo Rename
+Renamed `emily-summer` → `emily` on 2026-04-14 to host broader Emily-related planning beyond the single 2026 trip.
 
 ## Repository
 - **Path**: `/Users/aaxis/Documents/GitHub/emily`
